@@ -1,0 +1,28 @@
+#########################################################################
+# Title:         Community: Overseerr | hotio Migration Tasks           #
+# Author(s):     owine                                                  #
+# URL:           https://github.com/Cloudbox/Community                  #
+# --                                                                    #
+#         Part of the Cloudbox project: https://cloudbox.works          #
+#########################################################################
+#                   GNU General Public License v3.0                     #
+#########################################################################
+---
+- name: hotio Migration | Check folder exists
+  stat:
+    path: "/opt/overseerr"
+  register: folder
+
+- name: hotio Migration | Check subfolder exists
+  stat:
+    path: "/opt/overseerr/app"
+  register: subfolder
+
+- name: hotio Migration | Move 'overseerr' folder contents to 'app' subfolder
+  shell: |
+    mv "/opt/overseerr" /tmp/app
+    mkdir "/opt/overseerr"
+    mv /tmp/app "/opt/overseerr/"
+    find "/opt/overseerr/*" -type d -empty -delete
+    chown -R {{ user.name }}:{{ user.name }} "/opt/overseerr"
+  when: (folder.stat.exists) and not (subfolder.stat.exists)
