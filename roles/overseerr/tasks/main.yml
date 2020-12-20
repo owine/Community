@@ -29,18 +29,19 @@
 - name: Create and start container
   docker_container:
     name: overseerr
-    image: "sctx/overseerr"
+    image: "hotio/overseerr"
     pull: yes
-    user: "{{ uid }}:{{ gid }}"
     env:
       UMASK: "002"
+      PUID: "{{ uid }}"
+      PGID: "{{ gid }}"
       VIRTUAL_HOST: "{{ overseerr.subdomain|default('overseerr',true) }}.{{ user.domain }}"
       VIRTUAL_PORT: "5055"
       LETSENCRYPT_HOST: "{{ overseerr.subdomain|default('overseerr',true) }}.{{ user.domain }}"
       LETSENCRYPT_EMAIL: "{{ user.email }}"
       TZ: "{{ tz }}"
     volumes:
-      - "/opt/overseerr:/app/config"
+      - "/opt/overseerr:/config"
     labels:
       "com.github.cloudbox.cloudbox_managed": "true"
     networks:
